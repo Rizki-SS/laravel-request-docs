@@ -20,30 +20,30 @@ class LaravelCollection
                 "next" => "string"
             ],
             "meta" => [
-                "current_page" => "number",
-                "from" => "numeber",
-                "last_page" => "number",
+                "current_page" => "int",
+                "from" => "int",
+                "last_page" => "int",
                 "links" => [
                     [
-                        "url" => null,
-                        "label" => "&laquo; Previous",
-                        "active" => false
+                        "url" => "string",
+                        "label" => "string",
+                        "active" => "boolean"
                     ],
                     [
                         "url" => "string",
-                        "label" => "1",
-                        "active" => true
+                        "label" => "int",
+                        "active" => "boolean"
                     ],
                     [
-                        "url" => null,
-                        "label" => "Next &raquo;",
-                        "active" => false
+                        "url" => "string",
+                        "label" => "string",
+                        "active" => "boolean"
                     ]
                 ],
                 "path" => "string",
-                "per_page" => 1,
-                "to" => null,
-                "total" => 0
+                "per_page" => "int",
+                "to" => "int",
+                "total" => "int"
             ]
         ];
     }
