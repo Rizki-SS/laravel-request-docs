@@ -7,6 +7,7 @@ use Illuminate\Routing\RouteAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Rakutentech\LaravelRequestDocs\ResponseModel\LaravelCollection;
 use ReflectionClass;
 use ReflectionMethod;
 use Throwable;
@@ -208,6 +209,27 @@ class LaravelRequestDocs
                 [],
                 '',
             );
+
+            if (!config('request-docs.hide_response_schema')) {
+                $resposeScema = [];
+                $refectionMethod = new ReflectionMethod($controllerFullPath, $method);
+                $docComment = $this->getDocComment($refectionMethod);
+
+                $lines = explode("\n", $docComment);
+                foreach ($lines as $line) {
+                    $pattern = '/@LRDSchemaResponse\s+(\d+)\s+([\w|\\\\]+)(.*)/';
+                    if (preg_match($pattern, $line, $matches)) {
+                        $responseCode = $matches[1];
+                        $classScehma = $this->getClassSchema($matches[2]);
+                        $resposeScema[$responseCode] = $classScehma;
+
+                        if (isset($matches[3]) && trim($matches[3]) == "collection") 
+                            $resposeScema[$responseCode] = (new LaravelCollection)->toArray($classScehma);
+                    }
+                }
+                
+                $doc->setResponsesSchema($resposeScema);
+            }
 
             $docs->push($doc);
         }
@@ -549,4 +571,46 @@ class LaravelRequestDocs
 
         return $docComment;
     }
+
+    private function getClassSchema(string $namespace): array {
+        $reflectionClass = new ReflectionClass($namespace);
+        $properties = $reflectionClass->getProperties();
+    
+        $attributes = [];
+        foreach ($properties as $property) {
+            $propertyName = $property->getName();
+            $propertyType = $property->getType();
+            $propertyDoc  = $property->getDocComment();
+            $propertyTypeName = $propertyType ? $propertyType->getName() : 'mixed';
+
+            if ($propertyDoc) {
+                $propertyTypeName = $this->getTypeAtributDoc($propertyDoc);
+            }
+
+            if ($propertyTypeName == "hidden") {
+                continue;
+            }
+
+            if (class_exists($propertyTypeName)) {
+                $propertyTypeName = $this->getClassSchema($propertyTypeName);
+            }
+    
+            $attributes[$propertyName] = $propertyTypeName;
+        }
+    
+        return $attributes;
+    }
+
+    private function getTypeAtributDoc($propertyDoc) {
+        $pattern = '/@var\s+([\w|\\\\]+)/';
+
+        if (preg_match($pattern, $propertyDoc, $matches)) {
+            $typeAnnotation = $matches[1]; 
+            return $typeAnnotation;
+        }
+
+        return false;
+    }
+    
+
 }

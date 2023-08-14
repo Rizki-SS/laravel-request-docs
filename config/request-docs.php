@@ -29,6 +29,7 @@ return [
     ],
 
     'hide_meta_data' => false,
+    'hide_response_schema' => false,
     'hide_sql_data' => false,
     'hide_logs_data' => false,
     'hide_models_data' => false,

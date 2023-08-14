@@ -85,6 +85,13 @@ class Doc implements Arrayable
     private array $responses;
 
     /**
+     * A list of response schema codes in string format.
+     *
+     * @var string[]
+     */
+    private array $responsesSchema = [];
+
+    /**
      * A list of route path parameters, such as `/users/{id}`.
      *
      * @var array<string, string>
@@ -338,6 +345,24 @@ class Doc implements Arrayable
         return clone $this;
     }
 
+    /**
+     * Get the value of responsesSchema
+     */
+    public function getResponsesSchema(): array
+    {
+        return $this->responsesSchema;
+    }
+
+    /**
+     * Set the value of responsesSchema
+     */
+    public function setResponsesSchema(array $responsesSchema): self
+    {
+        $this->responsesSchema = $responsesSchema;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         $result = [
@@ -351,6 +376,7 @@ class Doc implements Arrayable
             'rules'                => $this->rules,
             'doc_block'            => $this->docBlock,
             'responses'            => $this->responses,
+            'response_schema'      => $this->responsesSchema
         ];
 
         if (isset($this->group)) {

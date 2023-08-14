@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { ChevronRightIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
 import ApiActionCurl from './ApiActionCurl';
+import ApiActionSchemaRespons from './ApiActionSchemaRespons';
 
 interface Props {
     lrdDocsItem: IAPIInfo,
@@ -81,6 +82,14 @@ export default function ApiActionInfo(props: Props) {
                                         ))}
                                     </div>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Response Schema
+                            </th>
+                            <td>
+                                <ApiActionSchemaRespons curlCommand={JSON.stringify(lrdDocsItem.response_schema, null, 2)} />
                             </td>
                         </tr>
                         <tr>
